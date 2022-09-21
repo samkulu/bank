@@ -26,6 +26,9 @@ parse_date <- function(x){
   # Replace ";" with nothing
   x <- gsub(";", "", x)
 
+  # Replace "" with NA character
+  x <- if_else(x == "", NA_character_, x)
+
   # Check String Length
   r <- nchar(x) %>% as_tibble() %>%
        # Take Maximum-Likelihood (ML) first
