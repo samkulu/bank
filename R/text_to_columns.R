@@ -2,7 +2,7 @@
 #'
 #' @param page Input text as page or line splitted strings
 #' @param pHeader Pattern for Header
-#' @param pDescription Pattern for Footer
+#' @param pDescription Pattern for Description
 #' @param pTransaction Pattern for Transactions
 #' @param preProcess Pre-Process txt with list of gsub replacements
 #' @param postProcess
@@ -15,7 +15,7 @@
 text_to_columns <- function(page,
                                pHeader = "Reference.*Trade_date.*Value_date",
                                pFooter = "",
-                               pDescription = "Text|Description|Information|Kurzform|Forma|Forme",
+                               pDescription = "Text|Description|Descrizione|Information|Kurzform|Forma|Forme",
                                pTransaction = "([0-9]{2}\\.[0-9]{2}\\.[0-9]{4}).*([0-9]{2}\\.[0-9]{2}\\.[0-9]{4})?",
                                preProcess = NULL,
                                postProcess = NULL,
@@ -28,7 +28,7 @@ text_to_columns <- function(page,
     # Take first only
     regmatches(x,m)[[1]][1]
   }
-
+  #browser()
   findAccount <- function(x){
     # take info only from lines above header
     y <- x[1:idxHeader]
@@ -110,6 +110,8 @@ text_to_columns <- function(page,
                          ePo = ePo,
                          Length = l,
                          Split = c(sPo,1000000L+2)[-1] -2 )
+    if(length(hh) == 0) return(NULL)
+
     rownames(result) <- hh
     # Return
     result
@@ -154,7 +156,7 @@ text_to_columns <- function(page,
   idxHeader <- grep(pHeader,ss, ignore.case = TRUE, perl = TRUE)[1]
   idxFooter <- grep(pFooter,ss, ignore.case = TRUE, perl = TRUE)[1]
 
-  if (length(idxHeader) == 0)
+  if (length(idxHeader) == 0 | is.na(idxHeader))
     return(NULL)
   else
     header <- ss[idxHeader]
