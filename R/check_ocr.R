@@ -1,6 +1,5 @@
 check_ocr <- function(path){
-  path <- "E:\\...\\"
-
+ 
   fls <- list.files(path, recursive = TRUE, full.names = TRUE)
 
   idx <- grep("RSearch", fls)
