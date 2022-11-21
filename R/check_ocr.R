@@ -1,5 +1,5 @@
 check_ocr <- function(path){
-  path <- "E:\\Case\\_US-REC VE\\B-20-4136-2 US-REC ORTEGA\\BJ Analyseakten\\"
+  path <- "E:\\...\\"
 
   fls <- list.files(path, recursive = TRUE, full.names = TRUE)
 
