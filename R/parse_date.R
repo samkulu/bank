@@ -54,8 +54,14 @@ parse_date <- function(x){
 
 
   if (n == 8) {
-    # "YYYYMMDD"
-    return(as.POSIXct(x, format="%Y%m%d"))
+
+    if (length(grep("\\.",x)) == 0)
+      return(as.POSIXct(x, format="%Y%m%d")) # "YYYYMMDD"
+    else if (length(grep("\\.",x)) > 0)
+      return(as.POSIXct(x, format="%d.%m.%y")) # "DD.MM.YY"
+    else if (length(grep("/",x)) > 0)
+      return(as.POSIXct(x, format="%d/%m/%y")) # "DD/MM/YY"
+
   } else if (n == 10) {
 
     if (length(grep("\\.",x)) > 0)

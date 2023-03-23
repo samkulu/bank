@@ -12,7 +12,7 @@
 #' @examples
 #' write_fun_txt(fls, dest, subfolder = "RSearch/tesseract", pdf_fun = pdf_ocr)
 #' write_fun_txt(fls, dest, subfolder = "RSearch/pdftxt", pdf_fun = pdf_txt)
-write_fun_txt <- function(fls, dest, 
+write_fun_txt <- function(fls, dest,
 							subfolder = "RSearch/fun",
 							pdf_fun = NA){
   # Process only files in path
@@ -36,19 +36,29 @@ write_fun_txt <- function(fls, dest,
     # Show file progress
     message(basename(fls[i]))
 
-    ### BEGIN from getting Text
-    txt <- pdf_fun(fls[i])
-    ### END
+    # PDF Length
+    N <- pdftools::pdf_length(fls[i])
 
-    N <- length(txt)
-    result[[i]] <- txt
-
-    # Filenames
+    # TXT Filenames
     p <- gsub("%N%", nchar(N), "page_%0%N%d.txt")
     pages <- sprintf(p,1:N)
     pages <- file.path(dest2[i],pages)
 
-    sapply(1:N, function(x) write_txt(pages[x], txt[x]))
+    # EXISTS
+    if (all(file.exists(pages))){
+      cat("txt files exist")
+    } else {
+      ### BEGIN from getting Text
+      txt <- pdf_fun(fls[i])
+      ### END
+
+      #N <- length(txt)
+      result[[i]] <- txt
+
+      # Export
+      sapply(1:N, function(x) write_txt(pages[x], txt[x]))
+    }
+
   }
 
   # Return

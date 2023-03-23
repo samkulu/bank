@@ -28,7 +28,7 @@ text_to_columns <- function(page,
     # Take first only
     regmatches(x,m)[[1]][1]
   }
-  #browser()
+
   findAccount <- function(x){
     # take info only from lines above header
     y <- x[1:idxHeader]
@@ -93,7 +93,7 @@ text_to_columns <- function(page,
     hh <- regmatches(header,m)[[1]]
 
     # Column with Description
-    if (verbose && length(grep(pDescription,header)) == 0){
+    if (verbose && length(grep(pDescription,header, ignore.case = TRUE)) == 0){
       message("Missing Description Column!")
       cat("Focus are the transactions. \n")
       cat("Line in between are interpreted as wrapped text. \n")
@@ -110,14 +110,23 @@ text_to_columns <- function(page,
                          ePo = ePo,
                          Length = l,
                          Split = c(sPo,1000000L+2)[-1] -2 )
+
     if(length(hh) == 0) return(NULL)
 
     rownames(result) <- hh
+
+    # Keep beginning
+    # paste0(rep(" ", sPo[1] - 1), collapse = "") == substr(header,1,sPo[1] - 1)
+    if(gsub(" ", "", substr(header, 1, sPo[1]-1)) == "")
+      result[1,1] <- 1
+
+
     # Return
     result
   }
 
   getReminder <- function(result){
+
     # Helper functions
     pasteX <- function(x) paste0(ss[x[1]:x[2]], collapse = "")
     cleanT <- function(x) gsub("\\t", "", x)
@@ -126,6 +135,7 @@ text_to_columns <- function(page,
     result %>%
       # Get Start + End
       mutate(
+        NumberOfLines = ifelse(is.na(NumberOfLines),1,NumberOfLines),
         AddFromLine =  ifelse(NumberOfLines == 1, 0, Line + 1 ),
         AddToLine = ifelse(NumberOfLines == 1, 0, Line + NumberOfLines - 1)
       ) %>%
